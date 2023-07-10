@@ -1,10 +1,19 @@
 
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from "react-redux";
+import { getFilter, setFilter } from "redux/filterSlice";
 import css from "./Filter.module.css";
 
 
 
-export function Filter({searchVal, onSearchSet}) {
+export function Filter() {
+
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
+
+  function handleFilter(event) {
+    console.log('filter', event.target.value);
+    return dispatch(setFilter(event.target.value));
+  }
 
     return (
       <label className={css.FilterLabel}>Find contacs by name
@@ -13,14 +22,10 @@ export function Filter({searchVal, onSearchSet}) {
           type="text"
           name="search"
           title="find contacs by name"
-          value={searchVal}
-          onChange={onSearchSet}
+          value={filter}
+          onChange={handleFilter}
         />
       </label>
     )
 }
 
-Filter.propTypes = {
-  searchVal: PropTypes.string.isRequired,
-  onSearchSet: PropTypes.func.isRequired
-}

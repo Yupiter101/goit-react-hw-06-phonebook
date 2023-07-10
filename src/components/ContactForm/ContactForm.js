@@ -1,20 +1,44 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from "react-redux";
+import { nanoid } from 'nanoid';
+import { addContact, getContacts } from "redux/contactSlice";
 import css from "./ContactForm.module.css";
 
 
-export function ContactForm({ onAddContact }) {
 
-  const newContact = (event) => {
+export function ContactForm() {
+
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+
+
+  const handleSubmit = (event) => {
     event.preventDefault();
     const { name, number } = event.target.elements;
-    onAddContact(name.value, number.value);
+  
+    let isSameName = contacts.some(cont => cont.name === name.value);
+    if(isSameName || !name.value.trim()) {
+      alert(`${name.value} is already in contacs`);
+      console.log(`${name.value} is already in contacs`);
+      isSameName = false;
+      return;
+    }
+
+    const newConntact = {
+      id: nanoid(),
+      name: name.value,
+      number: number.value,
+    }
+
+    dispatch(addContact(newConntact));
     event.target.reset();
+
   }
 
 
+
   return (
-      <form onSubmit={newContact} className={css.FormContact}>
+      <form onSubmit={handleSubmit} className={css.FormContact}>
           <label className={css.LabelContact}> Name
             <input
               className={css.InputContact}
@@ -42,10 +66,3 @@ export function ContactForm({ onAddContact }) {
   )
   
 }
-
-
-ContactForm.propTypes = {
-  onAddContact: PropTypes.func.isRequired,
-}
-
-
